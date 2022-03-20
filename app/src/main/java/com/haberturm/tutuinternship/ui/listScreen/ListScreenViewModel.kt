@@ -10,8 +10,10 @@ import com.haberturm.tutuinternship.data.network.ApiState
 import com.haberturm.tutuinternship.data.repositories.listScreen.ListScreenRepository
 import com.haberturm.tutuinternship.ui.nav.RouteNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hero.herodb.HeroEntity
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -30,28 +32,38 @@ class ListScreenViewModel @Inject constructor(
     fun getSuperHeroList(refresh: Boolean) = viewModelScope.launch {
         heroDataState = ApiState.Loading
         try {
-            getData(refresh = refresh)
-        }catch (e:Exception){
+            getData(refresh)
+        } catch (e: Exception) {
             Log.i("SPDATA", "$e")
             heroDataState = ApiState.Failure(e)
         }
     }
 
-    private suspend fun getData(refresh:Boolean){
+    private suspend fun getData(refresh: Boolean) {
         repository.getSuperHeroList(refresh)
             .catch { e ->
                 Log.i("SPDATA", "$e")
                 heroDataState = ApiState.Failure(e)
             }
             .collect { data ->
-                heroDataState = ApiState.Success(data)
+                if (data == emptyList<HeroEntity>()) {    //if db return empty list, this mean it first enter to the app
+                    throw Exception(UnknownHostException())
+                }
+                else {
+                    heroDataState = ApiState.Success(data)
+                }
+
             }
     }
 
-    fun onEvent(event: ListScreenEvent){
-        when(event){
-            is ListScreenEvent.RefreshData ->{
+    fun onEvent(event: ListScreenEvent) {
+        when (event) {
+            is ListScreenEvent.RefreshData -> {
                 getSuperHeroList(true)
+            }
+            is ListScreenEvent.TryOfflineMode -> {
+                getSuperHeroList(false)
+
             }
         }
     }
@@ -60,7 +72,7 @@ class ListScreenViewModel @Inject constructor(
     fun onStartClicked() {
         try {
             getSuperHeroList(true)
-        }catch (e: Exception){
+        } catch (e: Exception) {
             Log.i("SPDATA", "$e")
         }
 
