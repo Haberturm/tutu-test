@@ -1,0 +1,19 @@
+CREATE TABLE powerstats (
+    id INTEGER AS Int NOT NULL PRIMARY KEY,
+    intelligence INTEGER AS Int NOT NULL,
+    strength INTEGER AS Int NOT NULL,
+    speed INTEGER AS Int NOT NULL,
+    durability INTEGER AS Int NOT NULL,
+    power INTEGER AS Int NOT NULL,
+    combat INTEGER AS Int NOT NULL
+);
+
+getStatById:
+SELECT *
+FROM powerstats
+WHERE id = :id;
+
+insertStats:
+INSERT OR REPLACE
+INTO powerstats
+VALUES (?,?,?,?,?,?,?);

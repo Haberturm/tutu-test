@@ -5,11 +5,11 @@ import com.google.gson.annotations.SerializedName
 
 data class Powerstats (
 
-  @SerializedName("intelligence" ) var intelligence : Int? = null,
-  @SerializedName("strength"     ) var strength     : Int? = null,
-  @SerializedName("speed"        ) var speed        : Int? = null,
-  @SerializedName("durability"   ) var durability   : Int? = null,
-  @SerializedName("power"        ) var power        : Int? = null,
-  @SerializedName("combat"       ) var combat       : Int? = null
+  @SerializedName("intelligence" ) var intelligence : Int,
+  @SerializedName("strength"     ) var strength     : Int,
+  @SerializedName("speed"        ) var speed        : Int,
+  @SerializedName("durability"   ) var durability   : Int,
+  @SerializedName("power"        ) var power        : Int,
+  @SerializedName("combat"       ) var combat       : Int
 
 )

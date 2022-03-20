@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TutuInternship</string>
+    <string name="rationable">Чтобы приложение работало, нужно включить интренет. Включите интернет и обновите страницу</string>
+    <string name="loading">Загрузка...</string>
 </resources>

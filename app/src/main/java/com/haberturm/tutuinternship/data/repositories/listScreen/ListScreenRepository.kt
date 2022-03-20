@@ -1,8 +1,9 @@
 package com.haberturm.tutuinternship.data.repositories.listScreen
 
 import com.haberturm.tutuinternship.data.network.pojo.SuperHero
+import hero.herodb.HeroEntity
 import kotlinx.coroutines.flow.Flow
 
 interface ListScreenRepository {
-    fun getSuperHeroList(): Flow<List<SuperHero>>
+    suspend fun getSuperHeroList(refresh:Boolean): Flow<List<HeroEntity>>
 }

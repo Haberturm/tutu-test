@@ -1,0 +1,19 @@
+CREATE TABLE appearance (
+    id INTEGER AS Int NOT NULL PRIMARY KEY,
+    gender TEXT NOT NULL,
+    race TEXT NOT NULL,
+    height TEXT NOT NULL,
+    weight TEXT NOT NULL,
+    eyeColor TEXT NOT NULL,
+    hairColor TEXT NOT NULL
+);
+
+getApperanceById:
+SELECT *
+FROM appearance
+WHERE id = :id;
+
+insertApperance:
+INSERT OR REPLACE
+INTO appearance
+VALUES (?,?,?,?,?,?,?);
