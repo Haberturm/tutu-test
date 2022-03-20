@@ -1,17 +1,17 @@
 package com.haberturm.tutuinternship.data.network
 
+import android.content.Context
 import com.google.gson.GsonBuilder
+import com.haberturm.tutuinternship.data.network.okhttpUtil.InternetConnectionInterceptor
+import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-
     private const val TIME_OUT: Long = 120
-
     private val gson = GsonBuilder().setLenient().create()
-
     private val okHttpClient = OkHttpClient.Builder()
         .readTimeout(TIME_OUT, TimeUnit.SECONDS)
         .connectTimeout(TIME_OUT, TimeUnit.SECONDS)
@@ -20,7 +20,8 @@ object RetrofitClient {
             // Deal with the response code
             if (resp.code == 200) {
                 try {
-                    val myJson = resp.peekBody(2048).string() // peekBody() will not close the response
+                    val myJson =
+                        resp.peekBody(2048).string() // peekBody() will not close the response
                     println(myJson)
                 } catch (e: Exception) {
                     println("Error parse json from intercept..............")
@@ -29,7 +30,8 @@ object RetrofitClient {
                 println(resp)
             }
             resp
-        }.build()
+        }
+        .build()
 
     val retrofit: RetrofitInterface by lazy {
         Retrofit.Builder()

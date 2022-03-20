@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Work (
 
-  @SerializedName("occupation" ) var occupation : String? = null,
-  @SerializedName("base"       ) var base       : String? = null
+  @SerializedName("occupation" ) var occupation : String,
+  @SerializedName("base"       ) var base       : String
 
 )

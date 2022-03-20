@@ -1,0 +1,20 @@
+CREATE TABLE  heroEntity(
+    id INTEGER AS Int NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    fullName TEXT NOT NULL,
+    image TEXT NOT NULL
+);
+
+getAllHeroes:
+SELECT *
+FROM heroEntity;
+
+getHeroById:
+SELECT *
+FROM heroEntity
+WHERE id = :id;
+
+insertHero:
+INSERT OR REPLACE
+INTO heroEntity
+VALUES (?,?,?,?);
