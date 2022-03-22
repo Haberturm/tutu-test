@@ -122,7 +122,7 @@ fun Content(
                     name = (hero as HeroEntity).name,
                     fullName = hero.fullName,
                     image = hero.image,
-                    { viewModel.onEvent(ListScreenEvent.Navigate) }
+                    { viewModel.onEvent(ListScreenEvent.NavigateToDetailScreen(hero.id)) }
                 )
             }
         }

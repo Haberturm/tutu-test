@@ -88,8 +88,6 @@ class ListScreenViewModel @Inject constructor(
                     }
                 }
         }
-
-
     }
 
     fun onEvent(event: ListScreenEvent) {
@@ -100,21 +98,9 @@ class ListScreenViewModel @Inject constructor(
             is ListScreenEvent.TryOfflineMode -> {
                 getSuperHeroList(false)
             }
-            is ListScreenEvent.Navigate -> {
-                navigateToRoute(DetailScreenRoute.get(0))
+            is ListScreenEvent.NavigateToDetailScreen -> {
+                navigateToRoute(DetailScreenRoute.get(event.itemId))
             }
         }
     }
-
-//
-//    fun onStartClicked() {
-//        try {
-//            getSuperHeroList(true)
-//        } catch (e: Exception) {
-//            Log.i("SPDATA", "$e")
-//        }
-//
-//        // here we initiate navigation:
-//        //navigateToRoute(DetailScreenRoute.get(0))
-//    }
 }
