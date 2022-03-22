@@ -11,16 +11,16 @@ interface DataSource {
     //heroEntity
     suspend fun getHeroById(id: Int): HeroEntity?
     fun getAllHeroes(): Flow<List<HeroEntity>>
-//    suspend fun insertHero(
-//        id: Int,
-//        name: String,
-//        fullName: String,
-//        image: String,
-//    )
+    fun insertHero(
+        id: Int,
+        name: String,
+        fullName: String,
+        image: String,
+    )
     fun insertData(heroes: List<SuperHero>)
     //powerstats
     suspend fun getStatsById(id: Int): Powerstats?
-    suspend fun insertStats(
+    fun insertStats(
         id: Int,
         intelligence: Int,
         strength: Int,
@@ -31,7 +31,7 @@ interface DataSource {
     )
     //appearance
     suspend fun getAppearanceById(id: Int): Appearance?
-    suspend fun insertAppearance(
+    fun insertAppearance(
         id: Int,
         gender: String,
         race: String,

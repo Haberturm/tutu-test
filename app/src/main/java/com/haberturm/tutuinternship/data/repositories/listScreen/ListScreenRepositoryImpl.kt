@@ -48,9 +48,7 @@ class ListScreenRepositoryImpl(
 //            }
     }
 
-    private fun check4null(nullable: String?): String{
-        return nullable ?: "unknown"
-    }
+
 
     override fun isInternetAvailable(): Boolean {
         return try {
