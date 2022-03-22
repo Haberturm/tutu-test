@@ -17,3 +17,6 @@ insertApperance:
 INSERT OR REPLACE
 INTO appearance
 VALUES (?,?,?,?,?,?,?);
+
+clearData:
+DELETE FROM appearance;

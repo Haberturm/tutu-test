@@ -2,6 +2,7 @@ package com.haberturm.tutuinternship.data.db
 
 import com.haberturm.tutuinternship.HeroDatabase
 import com.haberturm.tutuinternship.data.network.pojo.Powerstats
+import com.haberturm.tutuinternship.data.network.pojo.SuperHero
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import hero.herodb.Appearance
@@ -28,15 +29,31 @@ class DataSourceImpl(
         return heroQueries.getAllHeroes().asFlow().mapToList()
     }
 
-    override suspend fun insertHero(id: Int, name: String, fullName: String, image: String) {
+
+    override suspend fun clearAllData() {
         withContext(Dispatchers.IO){
-            heroQueries.insertHero(
-                id,
-                name,
-                fullName,
-                image
-            )
+            heroQueries.clearData()
+            powerstatsQueries.clearData()
+            appearanceQueries.clearData()
         }
+    }
+
+    override fun insertData(heroes: List<SuperHero>) {
+
+            heroQueries.transaction {
+                heroes.forEach { hero ->
+
+                    heroQueries.insertHero(
+                        hero.id,
+                        hero.name,
+                        hero.biography.fullName,
+                        hero.images.sm
+                    )
+
+                }
+            }
+
+
     }
 
     override suspend fun getStatsById(id: Int): hero.herodb.Powerstats? {

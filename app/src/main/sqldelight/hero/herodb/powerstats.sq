@@ -17,3 +17,6 @@ insertStats:
 INSERT OR REPLACE
 INTO powerstats
 VALUES (?,?,?,?,?,?,?);
+
+clearData:
+DELETE FROM powerstats;

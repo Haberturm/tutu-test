@@ -16,5 +16,8 @@ WHERE id = :id;
 
 insertHero:
 INSERT OR REPLACE
-INTO heroEntity
+INTO heroEntity(id,name,fullName,image)
 VALUES (?,?,?,?);
+
+clearData:
+DELETE FROM heroEntity;

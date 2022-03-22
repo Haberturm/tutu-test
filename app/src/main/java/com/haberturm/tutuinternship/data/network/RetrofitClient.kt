@@ -1,9 +1,6 @@
 package com.haberturm.tutuinternship.data.network
 
-import android.content.Context
 import com.google.gson.GsonBuilder
-import com.haberturm.tutuinternship.data.network.okhttpUtil.InternetConnectionInterceptor
-import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
