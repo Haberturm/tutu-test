@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.haberturm.tutuinternship.data.DataState
 import com.haberturm.tutuinternship.data.repositories.listScreen.ListScreenRepository
+import com.haberturm.tutuinternship.ui.detailScreen.DetailScreenRoute
 import com.haberturm.tutuinternship.ui.nav.RouteNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hero.herodb.HeroEntity
@@ -98,6 +99,9 @@ class ListScreenViewModel @Inject constructor(
             }
             is ListScreenEvent.TryOfflineMode -> {
                 getSuperHeroList(false)
+            }
+            is ListScreenEvent.Navigate -> {
+                navigateToRoute(DetailScreenRoute.get(0))
             }
         }
     }

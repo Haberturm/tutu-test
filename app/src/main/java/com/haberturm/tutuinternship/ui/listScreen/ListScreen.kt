@@ -21,7 +21,6 @@ import com.haberturm.tutuinternship.ui.view.Item
 import com.haberturm.tutuinternship.ui.view.LoadingScreen
 import com.haberturm.tutuinternship.ui.view.Rationable
 import hero.herodb.HeroEntity
-import java.net.UnknownHostException
 
 /**
  * Every screen has a route, so that we don't have to add the route setup of all screens to the [NavigationComponent].
@@ -122,7 +121,8 @@ fun Content(
                 Item(
                     name = (hero as HeroEntity).name,
                     fullName = hero.fullName,
-                    image = hero.image
+                    image = hero.image,
+                    { viewModel.onEvent(ListScreenEvent.Navigate) }
                 )
             }
         }
