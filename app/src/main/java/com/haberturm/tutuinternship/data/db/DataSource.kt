@@ -1,5 +1,6 @@
 package com.haberturm.tutuinternship.data.db
 
+import com.haberturm.tutuinternship.data.network.pojo.SuperHero
 import hero.herodb.Appearance
 import hero.herodb.HeroEntity
 import hero.herodb.Powerstats
@@ -10,15 +11,16 @@ interface DataSource {
     //heroEntity
     suspend fun getHeroById(id: Int): HeroEntity?
     fun getAllHeroes(): Flow<List<HeroEntity>>
-    suspend fun insertHero(
+    fun insertHero(
         id: Int,
         name: String,
         fullName: String,
         image: String,
     )
+    fun insertData(heroes: List<SuperHero>)
     //powerstats
     suspend fun getStatsById(id: Int): Powerstats?
-    suspend fun insertStats(
+    fun insertStats(
         id: Int,
         intelligence: Int,
         strength: Int,
@@ -29,7 +31,7 @@ interface DataSource {
     )
     //appearance
     suspend fun getAppearanceById(id: Int): Appearance?
-    suspend fun insertAppearance(
+    fun insertAppearance(
         id: Int,
         gender: String,
         race: String,
@@ -38,4 +40,6 @@ interface DataSource {
         eyeColor: String,
         hairColor: String
     )
+
+    suspend fun clearAllData()
 }

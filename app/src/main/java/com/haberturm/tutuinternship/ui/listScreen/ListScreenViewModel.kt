@@ -6,13 +6,28 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.haberturm.tutuinternship.data.network.ApiState
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.haberturm.tutuinternship.data.DataState
 import com.haberturm.tutuinternship.data.repositories.listScreen.ListScreenRepository
 import com.haberturm.tutuinternship.ui.nav.RouteNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import hero.herodb.HeroEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okio.IOException
+import java.net.InetSocketAddress
+import java.net.Socket
+import java.net.UnknownHostException
+import java.util.*
 import javax.inject.Inject
+
+object ListException {
+    const val FIRST_ENTER = "FIRST_ENTER_EXCEPTION"
+}
+
 
 @HiltViewModel
 class ListScreenViewModel @Inject constructor(
@@ -20,51 +35,82 @@ class ListScreenViewModel @Inject constructor(
     private val repository: ListScreenRepository
 ) : ViewModel(), RouteNavigator by routeNavigator { // prefer delegation over inheritance
 
-    var heroDataState by mutableStateOf<ApiState>(ApiState.Empty)
+    var heroDataState by mutableStateOf<DataState>(DataState.Empty)
+        private set
+
+    var swipeIndicatorVisibility by mutableStateOf(false)
         private set
 
     init {
         getSuperHeroList(true)
     }
 
-    fun getSuperHeroList(refresh: Boolean) = viewModelScope.launch {
-        heroDataState = ApiState.Loading
+    private fun getSuperHeroList(refresh: Boolean) = viewModelScope.launch {
+        heroDataState = DataState.Loading
+        swipeIndicatorVisibility = true
         try {
-            getData(refresh = refresh)
-        }catch (e:Exception){
-            Log.i("SPDATA", "$e")
-            heroDataState = ApiState.Failure(e)
+            getData(refresh)
+        } catch (e: Exception) {
+            Log.i("EXCEPRION-LISTVM1", "$e")
+            if (e is UnknownHostException) { //mean o internet connection in this case
+                onEvent(ListScreenEvent.TryOfflineMode)
+            } else {
+                heroDataState = DataState.Failure(e)
+            }
+
         }
     }
 
-    private suspend fun getData(refresh:Boolean){
-        repository.getSuperHeroList(refresh)
-            .catch { e ->
-                Log.i("SPDATA", "$e")
-                heroDataState = ApiState.Failure(e)
-            }
-            .collect { data ->
-                heroDataState = ApiState.Success(data)
-            }
+    private suspend fun getData(refresh: Boolean) {
+        withContext(Dispatchers.IO) {
+            repository.getSuperHeroList(refresh)
+                .catch { e ->
+                    Log.i("EXCEPRION-LISTVM2", "$e")
+                    heroDataState = DataState.Failure(e)
+                }
+                .collect { data ->
+                    if (refresh) {
+                        swipeIndicatorVisibility = false
+                        delay(500) //for smooth loading screen
+                        heroDataState = DataState.Success(data)
+
+                    } else {
+                        //if db return not empty list, this mean we should try offline mode.
+                        if (data != emptyList<HeroEntity>() && !repository.isInternetAvailable()) {
+                            swipeIndicatorVisibility = false
+                            delay(500)  //for smooth loading screen
+                            heroDataState = DataState.Offline(data)
+
+                        } else {
+                            throw Exception(ListException.FIRST_ENTER)
+                        }
+                    }
+                }
+        }
+
+
     }
 
-    fun onEvent(event: ListScreenEvent){
-        when(event){
-            is ListScreenEvent.RefreshData ->{
+    fun onEvent(event: ListScreenEvent) {
+        when (event) {
+            is ListScreenEvent.RefreshData -> {
                 getSuperHeroList(true)
             }
+            is ListScreenEvent.TryOfflineMode -> {
+                getSuperHeroList(false)
+            }
         }
     }
 
-
-    fun onStartClicked() {
-        try {
-            getSuperHeroList(true)
-        }catch (e: Exception){
-            Log.i("SPDATA", "$e")
-        }
-
-        // here we initiate navigation:
-        //navigateToRoute(DetailScreenRoute.get(0))
-    }
+//
+//    fun onStartClicked() {
+//        try {
+//            getSuperHeroList(true)
+//        } catch (e: Exception) {
+//            Log.i("SPDATA", "$e")
+//        }
+//
+//        // here we initiate navigation:
+//        //navigateToRoute(DetailScreenRoute.get(0))
+//    }
 }

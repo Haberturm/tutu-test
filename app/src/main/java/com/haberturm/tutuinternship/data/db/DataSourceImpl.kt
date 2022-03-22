@@ -2,6 +2,7 @@ package com.haberturm.tutuinternship.data.db
 
 import com.haberturm.tutuinternship.HeroDatabase
 import com.haberturm.tutuinternship.data.network.pojo.Powerstats
+import com.haberturm.tutuinternship.data.network.pojo.SuperHero
 import com.squareup.sqldelight.runtime.coroutines.asFlow
 import com.squareup.sqldelight.runtime.coroutines.mapToList
 import hero.herodb.Appearance
@@ -19,7 +20,7 @@ class DataSourceImpl(
     private val appearanceQueries = db.appearanceQueries
 
     override suspend fun getHeroById(id: Int): HeroEntity? {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             heroQueries.getHeroById(id).executeAsOneOrNull()
         }
     }
@@ -28,24 +29,65 @@ class DataSourceImpl(
         return heroQueries.getAllHeroes().asFlow().mapToList()
     }
 
-    override suspend fun insertHero(id: Int, name: String, fullName: String, image: String) {
-        withContext(Dispatchers.IO){
-            heroQueries.insertHero(
-                id,
-                name,
-                fullName,
-                image
-            )
+    override fun insertHero(id: Int, name: String, fullName: String, image: String) {
+        heroQueries.insertHero(
+            id, name, fullName, image
+        )
+    }
+
+
+    override suspend fun clearAllData() {
+        withContext(Dispatchers.IO) {
+            heroQueries.clearData()
+            powerstatsQueries.clearData()
+            appearanceQueries.clearData()
         }
     }
 
+    override fun insertData(heroes: List<SuperHero>) {
+
+        heroQueries.transaction {
+            heroes.forEach { hero ->
+
+                insertHero(
+                    id = hero.id,
+                    name = hero.name,
+                    fullName = hero.biography.fullName,
+                    image = hero.images.sm
+                )
+
+                insertStats(
+                    id = hero.id,
+                    intelligence = hero.powerstats.intelligence,
+                    strength = hero.powerstats.strength,
+                    speed = hero.powerstats.speed,
+                    durability = hero.powerstats.durability,
+                    power = hero.powerstats.power,
+                    combat = hero.powerstats.combat
+                )
+                insertAppearance(
+                    id = hero.id,
+                    gender = hero.appearance.gender,
+                    race = check4null(hero.appearance.race),
+                    height = hero.appearance.height[1], //lets trust our api:)
+                    weight = hero.appearance.weight[1],
+                    eyeColor = hero.appearance.eyeColor,
+                    hairColor = hero.appearance.hairColor
+                )
+
+            }
+        }
+
+
+    }
+
     override suspend fun getStatsById(id: Int): hero.herodb.Powerstats? {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             powerstatsQueries.getStatById(id).executeAsOneOrNull()
         }
     }
 
-    override suspend fun insertStats(
+    override fun insertStats(
         id: Int,
         intelligence: Int,
         strength: Int,
@@ -54,26 +96,26 @@ class DataSourceImpl(
         power: Int,
         combat: Int
     ) {
-        withContext(Dispatchers.IO){
-            powerstatsQueries.insertStats(
-                id,
-                intelligence,
-                strength,
-                speed,
-                durability,
-                power,
-                combat
-            )
-        }
+
+        powerstatsQueries.insertStats(
+            id,
+            intelligence,
+            strength,
+            speed,
+            durability,
+            power,
+            combat
+        )
+
     }
 
     override suspend fun getAppearanceById(id: Int): Appearance? {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             appearanceQueries.getApperanceById(id).executeAsOneOrNull()
         }
     }
 
-    override suspend fun insertAppearance(
+    override fun insertAppearance(
         id: Int,
         gender: String,
         race: String,
@@ -82,16 +124,18 @@ class DataSourceImpl(
         eyeColor: String,
         hairColor: String
     ) {
-        withContext(Dispatchers.IO){
-            appearanceQueries.insertApperance(
-                id,
-                gender,
-                race,
-                height,
-                weight,
-                eyeColor,
-                hairColor
-            )
-        }
+        appearanceQueries.insertApperance(
+            id,
+            gender,
+            race,
+            height,
+            weight,
+            eyeColor,
+            hairColor
+        )
+    }
+
+    private fun check4null(nullable: String?): String {
+        return nullable ?: "unknown"
     }
 }
