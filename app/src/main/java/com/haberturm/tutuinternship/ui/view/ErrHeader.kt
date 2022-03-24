@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun ErrorView(
+fun ErrorHeader(
     text: String = "Для тестирования. Нужно обновить"
 ) {
     Row(
@@ -32,5 +32,5 @@ fun ErrorView(
 @Composable
 @Preview
 fun ErrCardPrev() {
-    ErrorView()
+    ErrorHeader()
 }

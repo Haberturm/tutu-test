@@ -108,7 +108,6 @@ private fun DetailScreen(
             else -> {
             }
         }
-
     }
 }
 

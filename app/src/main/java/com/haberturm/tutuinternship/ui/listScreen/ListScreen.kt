@@ -73,7 +73,7 @@ private fun ListScreen(
                 Content(
                     heroList = heroList,
                     errContent = {
-                        ErrorView(
+                        ErrorHeader(
                             text = stringResource(R.string.internet_err)
                         )
                     },
