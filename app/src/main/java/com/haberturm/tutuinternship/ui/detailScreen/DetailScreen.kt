@@ -1,6 +1,5 @@
 package com.haberturm.tutuinternship.ui.detailScreen
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -10,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,9 +23,6 @@ import com.haberturm.tutuinternship.data.DataState
 import com.haberturm.tutuinternship.ui.model.HeroUi
 import com.haberturm.tutuinternship.ui.nav.NavRoute
 import com.haberturm.tutuinternship.ui.nav.getOrThrow
-import hero.herodb.Appearance
-import hero.herodb.HeroEntity
-import hero.herodb.Powerstats
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 
@@ -77,7 +72,7 @@ private fun DetailScreen(
                 val hero = (dataState.data as DetailUiModel).hero
                 val powerstats = (dataState.data as DetailUiModel).powerstats
                 val appearance = (dataState.data as DetailUiModel).appearance
-                MainDetail(hero = hero)
+                MainDetail(hero = hero) { viewModel.onEvent(DetailEvent.OnNavigateUpClicked) }
                 AdditionalDetails(items = powerstats)
                 AdditionalDetails(items = appearance)
 
@@ -89,7 +84,10 @@ private fun DetailScreen(
 }
 
 @Composable
-fun MainDetail(hero: HeroUi) {
+fun MainDetail(
+    hero: HeroUi,
+    action: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -97,7 +95,9 @@ fun MainDetail(hero: HeroUi) {
         elevation = 10.dp,
     ) {
         Column() {
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(
+                onClick = { action() }
+            ) {
                 Icon(
                     painter = painterResource(
                         id = R.drawable.ic_baseline_arrow_back_24,

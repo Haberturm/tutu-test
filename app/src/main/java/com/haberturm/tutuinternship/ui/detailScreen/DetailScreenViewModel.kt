@@ -54,9 +54,8 @@ class DetailScreenViewModel @Inject constructor(
             try {
                 detailDataState = DataState.Success(
                     data = DetailUiModel(
-                        hero = repository.getHeroById(heroId)?.toHeroUi() ?: throw Exception(
-                            DetailException.HERO_DOESNT_EXIST
-                        ),
+                        hero = repository.getHeroById(heroId)?.toHeroUi()
+                            ?: throw Exception(DetailException.HERO_DOESNT_EXIST),
                         appearance = repository.getHeroAppearanceById(heroId)?.toAppearanceUi()
                             ?: throw Exception(DetailException.HERO_DOESNT_EXIST),
                         powerstats = repository.getHeroPowerstatsById(heroId)?.toPowerstatsUi()
@@ -74,9 +73,12 @@ class DetailScreenViewModel @Inject constructor(
         }
     }
 
-
-    fun onUpClicked() {
-        navigateUp()
+    fun onEvent(event: DetailEvent) {
+        when (event) {
+            is DetailEvent.OnNavigateUpClicked -> {
+                navigateUp()
+            }
+        }
     }
 
 }
