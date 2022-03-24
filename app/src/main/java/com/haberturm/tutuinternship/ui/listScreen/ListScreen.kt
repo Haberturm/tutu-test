@@ -45,20 +45,6 @@ private fun ListScreen(
     Column(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        Button(onClick = {viewModel.onEvent(ListScreenEvent.RefreshData)}) {
-            Text(text = "pleeeease")
-        }
-//        val data = viewModel.data.collectAsState(initial = emptyList())
-//        LazyColumn {
-//
-//            items(data.value) { hero ->
-//                Item(
-//                    name = hero.name,
-//                    fullName = hero.fullName,
-//                    image = hero.image
-//                )
-//            }
-//        }
         val dataState = viewModel.heroDataState
         Log.i("state", dataState.toString())
         when (dataState) {
