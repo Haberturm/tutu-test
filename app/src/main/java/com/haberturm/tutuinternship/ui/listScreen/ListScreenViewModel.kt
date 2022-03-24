@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.haberturm.tutuinternship.data.DataState
 import com.haberturm.tutuinternship.data.repositories.listScreen.ListScreenRepository
+import com.haberturm.tutuinternship.ui.detailScreen.DetailScreenRoute
 import com.haberturm.tutuinternship.ui.nav.RouteNavigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import hero.herodb.HeroEntity
@@ -17,11 +18,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okio.IOException
-import java.net.InetSocketAddress
-import java.net.Socket
 import java.net.UnknownHostException
-import java.util.*
 import javax.inject.Inject
 
 object ListException {
@@ -87,8 +84,6 @@ class ListScreenViewModel @Inject constructor(
                     }
                 }
         }
-
-
     }
 
     fun onEvent(event: ListScreenEvent) {
@@ -99,18 +94,9 @@ class ListScreenViewModel @Inject constructor(
             is ListScreenEvent.TryOfflineMode -> {
                 getSuperHeroList(false)
             }
+            is ListScreenEvent.NavigateToDetailScreen -> {
+                navigateToRoute(DetailScreenRoute.get(event.itemId))
+            }
         }
     }
-
-//
-//    fun onStartClicked() {
-//        try {
-//            getSuperHeroList(true)
-//        } catch (e: Exception) {
-//            Log.i("SPDATA", "$e")
-//        }
-//
-//        // here we initiate navigation:
-//        //navigateToRoute(DetailScreenRoute.get(0))
-//    }
 }
