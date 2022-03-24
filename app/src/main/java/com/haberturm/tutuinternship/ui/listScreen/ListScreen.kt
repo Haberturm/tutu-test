@@ -1,6 +1,7 @@
 package com.haberturm.tutuinternship.ui.listScreen
 
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,10 +17,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.haberturm.tutuinternship.R
 import com.haberturm.tutuinternship.data.DataState
 import com.haberturm.tutuinternship.ui.nav.NavRoute
-import com.haberturm.tutuinternship.ui.view.ErrorView
-import com.haberturm.tutuinternship.ui.view.Item
-import com.haberturm.tutuinternship.ui.view.LoadingScreen
-import com.haberturm.tutuinternship.ui.view.Rationable
+import com.haberturm.tutuinternship.ui.view.*
 import hero.herodb.HeroEntity
 
 /**
@@ -52,7 +50,7 @@ private fun ListScreen(
                 val heroList = dataState.data as List<*>
                 Content(
                     heroList = heroList,
-                    content = {},
+                    errContent = {},
                     viewModel = viewModel
                 )
             }
@@ -60,17 +58,17 @@ private fun ListScreen(
                 LoadingScreen()
             }
             is DataState.Failure -> {
-                if (dataState.e.message == ListException.FIRST_ENTER) { //mean there is no internet connection
+                if (dataState.e.message == ListException.FIRST_ENTER) { 
                     Rationable { viewModel.onEvent(ListScreenEvent.RefreshData) }
                 }else{
-                    //TODO unkonwn exception
+                    UnknownError()
                 }
             }
             is DataState.Offline -> {
                 val heroList = dataState.data as List<*>
                 Content(
                     heroList = heroList,
-                    content = {
+                    errContent = {
                         ErrorView(
                             text = stringResource(R.string.internet_err)
                         )
@@ -85,10 +83,11 @@ private fun ListScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Content(
     heroList: List<*>,
-    content: @Composable() () -> Unit,
+    errContent: @Composable() () -> Unit,
     viewModel: ListScreenViewModel,
 ) {
 
@@ -99,9 +98,10 @@ fun Content(
             viewModel.onEvent(ListScreenEvent.RefreshData)
         })
     {
+
         LazyColumn {
-            item {
-                content()
+            stickyHeader{
+                errContent()
             }
             items(heroList) { hero ->
                 Item(
@@ -112,5 +112,6 @@ fun Content(
                 )
             }
         }
+
     }
 }

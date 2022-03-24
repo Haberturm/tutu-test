@@ -24,6 +24,7 @@ import com.haberturm.tutuinternship.data.DataState
 import com.haberturm.tutuinternship.ui.model.HeroUi
 import com.haberturm.tutuinternship.ui.nav.NavRoute
 import com.haberturm.tutuinternship.ui.nav.getOrThrow
+import com.haberturm.tutuinternship.ui.view.UnknownError
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 
@@ -99,6 +100,10 @@ private fun DetailScreen(
                 )
 
             }
+            is DataState.Failure -> {
+                UnknownError()
+            }
+            else -> { }
         }
 
     }
@@ -189,27 +194,27 @@ inline fun <reified T : Any> AdditionalDetails(
                 IconButton(
                     onClick = { expandAction() },
                 ) {
-                    if (isExpanded){
+                    if (isExpanded) {
                         Icon(
                             painter = painterResource(
                                 id = R.drawable.ic_baseline_expand_less_24,
                             ),
-                            contentDescription ="expand-less",
+                            contentDescription = "expand-less",
                             tint = MaterialTheme.colors.secondaryVariant
                         )
-                    }else{
+                    } else {
                         Icon(
                             painter = painterResource(
                                 id = R.drawable.ic_baseline_expand_more_24,
                             ),
-                            contentDescription ="expand-more",
+                            contentDescription = "expand-more",
                             tint = MaterialTheme.colors.secondaryVariant
                         )
                     }
 
                 }
             }
-            if(isExpanded){
+            if (isExpanded) {
                 val reflection: KClass<T> = T::class
                 for (prop in reflection.memberProperties) {
                     Text(

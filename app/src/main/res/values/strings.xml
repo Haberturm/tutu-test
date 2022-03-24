@@ -3,4 +3,5 @@
     <string name="rationable">Чтобы приложение работало, нужно включить интренет. Включите интернет и обновите страницу</string>
     <string name="loading">Загрузка...</string>
     <string name="internet_err">Нет соединения с интренетом. Данные могли устареть.</string>
+    <string name="something_went_wrong">Что то пошло не так...</string>
 </resources>
