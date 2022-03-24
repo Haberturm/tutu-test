@@ -48,6 +48,10 @@ class DetailScreenViewModel @Inject constructor(
     private val heroId = DetailScreenRoute.getIndexFrom(savedStateHandle)
     var detailDataState by mutableStateOf<DataState>(DataState.Empty)
         private set
+    var expandPowerState by mutableStateOf<Boolean>(false)
+        private set
+    var expandAppearanceState by mutableStateOf<Boolean>(false)
+        private set
 
     init {
         viewModelScope.launch {
@@ -78,7 +82,14 @@ class DetailScreenViewModel @Inject constructor(
             is DetailEvent.OnNavigateUpClicked -> {
                 navigateUp()
             }
+            is DetailEvent.OnExpandClicked -> {
+                if (event.key == EXPAND_APPEARANCE_KEY) {
+                    expandAppearanceState = !expandAppearanceState
+                }
+                if (event.key == EXPAND_POWER_KEY) {
+                    expandPowerState = !expandPowerState
+                }
+            }
         }
     }
-
 }

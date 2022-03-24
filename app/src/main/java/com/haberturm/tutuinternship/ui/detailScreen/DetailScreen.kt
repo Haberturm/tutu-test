@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -72,13 +73,33 @@ private fun DetailScreen(
                 val hero = (dataState.data as DetailUiModel).hero
                 val powerstats = (dataState.data as DetailUiModel).powerstats
                 val appearance = (dataState.data as DetailUiModel).appearance
-                MainDetail(hero = hero) { viewModel.onEvent(DetailEvent.OnNavigateUpClicked) }
-                AdditionalDetails(items = powerstats)
-                AdditionalDetails(items = appearance)
+                MainDetail(
+                    hero = hero,
+                    action = { viewModel.onEvent(DetailEvent.OnNavigateUpClicked) }
+                )
+                AdditionalDetails(
+                    items = powerstats,
+                    expandAction = {
+                        viewModel.onEvent(
+                            DetailEvent.OnExpandClicked(EXPAND_POWER_KEY)
+                        )
+                    },
+                    isExpanded = viewModel.expandPowerState,
+                    header = "Powerstats:"
+                )
+                AdditionalDetails(
+                    items = appearance,
+                    expandAction = {
+                        viewModel.onEvent(
+                            DetailEvent.OnExpandClicked(EXPAND_APPEARANCE_KEY)
+                        )
+                    },
+                    isExpanded = viewModel.expandAppearanceState,
+                    header = "Appearance:"
+                )
 
             }
         }
-
 
     }
 }
@@ -139,19 +160,56 @@ fun MainDetail(
 }
 
 @Composable
-inline fun <reified T : Any> AdditionalDetails(items: T) {
+inline fun <reified T : Any> AdditionalDetails(
+    items: T,
+    noinline expandAction: () -> Unit,
+    isExpanded: Boolean,
+    header: String
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp),
         elevation = 10.dp,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+        Column(
             modifier = Modifier
                 .padding(8.dp)
         ) {
-            Column() {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = header,
+                    fontSize = 20.sp,
+                    modifier = Modifier.weight(1f),
+                    fontWeight = FontWeight.Bold
+                )
+                IconButton(
+                    onClick = { expandAction() },
+                ) {
+                    if (isExpanded){
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.ic_baseline_expand_less_24,
+                            ),
+                            contentDescription ="expand-less",
+                            tint = MaterialTheme.colors.secondaryVariant
+                        )
+                    }else{
+                        Icon(
+                            painter = painterResource(
+                                id = R.drawable.ic_baseline_expand_more_24,
+                            ),
+                            contentDescription ="expand-more",
+                            tint = MaterialTheme.colors.secondaryVariant
+                        )
+                    }
+
+                }
+            }
+            if(isExpanded){
                 val reflection: KClass<T> = T::class
                 for (prop in reflection.memberProperties) {
                     Text(
