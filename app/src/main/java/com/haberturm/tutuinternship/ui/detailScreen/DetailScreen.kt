@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,7 +25,8 @@ import com.haberturm.tutuinternship.data.DataState
 import com.haberturm.tutuinternship.ui.model.HeroUi
 import com.haberturm.tutuinternship.ui.nav.NavRoute
 import com.haberturm.tutuinternship.ui.nav.getOrThrow
-import com.haberturm.tutuinternship.ui.view.UnknownError
+import com.haberturm.tutuinternship.ui.view.ErrorView
+import com.haberturm.tutuinternship.ui.view.LoadingScreen
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
 
@@ -57,18 +59,13 @@ object DetailScreenRoute : NavRoute<DetailScreenViewModel> {
     override fun Content(viewModel: DetailScreenViewModel) = DetailScreen(viewModel)
 }
 
-/**
- * Just your average Composable, nothing special here.
- */
 @Composable
 private fun DetailScreen(
     viewModel: DetailScreenViewModel
 ) {
-
     Column(
         modifier = Modifier.padding(8.dp),
     ) {
-
         when (val dataState = viewModel.detailDataState) {
             is DataState.Success -> {
                 val hero = (dataState.data as DetailUiModel).hero
@@ -98,12 +95,18 @@ private fun DetailScreen(
                     isExpanded = viewModel.expandAppearanceState,
                     header = "Appearance:"
                 )
-
             }
             is DataState.Failure -> {
-                UnknownError()
+                ErrorView(
+                    action = { viewModel.onEvent(DetailEvent.RefreshData) },
+                    text = stringResource(id = R.string.something_went_wrong)
+                )
             }
-            else -> { }
+            is DataState.Loading ->{
+                LoadingScreen()
+            }
+            else -> {
+            }
         }
 
     }
@@ -211,7 +214,6 @@ inline fun <reified T : Any> AdditionalDetails(
                             tint = MaterialTheme.colors.secondaryVariant
                         )
                     }
-
                 }
             }
             if (isExpanded) {

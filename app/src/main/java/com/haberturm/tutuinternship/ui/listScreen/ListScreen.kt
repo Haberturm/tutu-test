@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -44,7 +42,7 @@ private fun ListScreen(
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
         val dataState = viewModel.heroDataState
-        Log.i("state", dataState.toString())
+
         when (dataState) {
             is DataState.Success -> {
                 val heroList = dataState.data as List<*>
@@ -58,10 +56,16 @@ private fun ListScreen(
                 LoadingScreen()
             }
             is DataState.Failure -> {
-                if (dataState.e.message == ListException.FIRST_ENTER) { 
-                    Rationable { viewModel.onEvent(ListScreenEvent.RefreshData) }
+                if (dataState.e.message == ListException.FIRST_ENTER) {
+                    ErrorView(
+                        action = { viewModel.onEvent(ListScreenEvent.RefreshData) }, 
+                        text = stringResource(id = R.string.rationable)
+                    )
                 }else{
-                    UnknownError()
+                    ErrorView(
+                        action = { viewModel.onEvent(ListScreenEvent.RefreshData) },
+                        text = stringResource(id = R.string.something_went_wrong)
+                    )
                 }
             }
             is DataState.Offline -> {

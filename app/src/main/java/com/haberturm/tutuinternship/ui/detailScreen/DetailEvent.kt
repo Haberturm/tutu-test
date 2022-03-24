@@ -1,8 +1,9 @@
 package com.haberturm.tutuinternship.ui.detailScreen
 
-sealed class DetailEvent{
+sealed class DetailEvent {
     object OnNavigateUpClicked : DetailEvent()
-    data class OnExpandClicked(val key:String) : DetailEvent()
+    data class OnExpandClicked(val key: String) : DetailEvent()
+    object RefreshData : DetailEvent()
 }
 
 const val EXPAND_POWER_KEY = "EXPAND_POWER"

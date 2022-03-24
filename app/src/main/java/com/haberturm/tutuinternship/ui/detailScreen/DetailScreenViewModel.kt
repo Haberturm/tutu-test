@@ -10,6 +10,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.haberturm.tutuinternship.data.DataState
 import com.haberturm.tutuinternship.data.repositories.detailScreen.DetailRepository
+import com.haberturm.tutuinternship.ui.listScreen.ListScreenRoute
 import com.haberturm.tutuinternship.ui.model.AppearanceUi
 import com.haberturm.tutuinternship.ui.model.HeroUi
 import com.haberturm.tutuinternship.ui.model.PowerstatsUi
@@ -54,6 +55,11 @@ class DetailScreenViewModel @Inject constructor(
         private set
 
     init {
+        getData()
+    }
+
+    private fun getData(){
+        detailDataState = DataState.Loading
         viewModelScope.launch {
             try {
                 detailDataState = DataState.Success(
@@ -66,13 +72,11 @@ class DetailScreenViewModel @Inject constructor(
                             ?: throw Exception(DetailException.HERO_DOESNT_EXIST)
                     )
                 )
-
             } catch (e: Exception) {
                 Log.i("DetailException1", "$e")
                 withContext(Dispatchers.Main) {  //because of snapshot problem
                     detailDataState = DataState.Failure(e)
                 }
-
             }
         }
     }
@@ -89,6 +93,9 @@ class DetailScreenViewModel @Inject constructor(
                 if (event.key == EXPAND_POWER_KEY) {
                     expandPowerState = !expandPowerState
                 }
+            }
+            is DetailEvent.RefreshData ->{
+                navigateToRoute(ListScreenRoute.route)
             }
         }
     }

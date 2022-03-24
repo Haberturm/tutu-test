@@ -45,11 +45,12 @@ class ListScreenViewModel @Inject constructor(
     private fun getSuperHeroList(refresh: Boolean) = viewModelScope.launch {
         heroDataState = DataState.Loading
         swipeIndicatorVisibility = true
+        delay(500) //for smooth loading screen
         try {
             getData(refresh)
         } catch (e: Exception) {
-            Log.i("EXCEPRION-LISTVM1", "$e")
-            if (e is UnknownHostException) { //mean o internet connection in this case
+            Log.i("EXCEPTION-LISTVM1", "$e")
+            if (e is UnknownHostException) { //mean no internet connection in this case
                 onEvent(ListScreenEvent.TryOfflineMode)
             } else {
                 heroDataState = DataState.Failure(e)
@@ -62,22 +63,18 @@ class ListScreenViewModel @Inject constructor(
         withContext(Dispatchers.IO) {
             repository.getSuperHeroList(refresh)
                 .catch { e ->
-                    Log.i("EXCEPRION-LISTVM2", "$e")
+                    Log.i("EXCEPTION-LISTVM2", "$e")
                     heroDataState = DataState.Failure(e)
                 }
                 .collect { data ->
                     if (refresh) {
                         swipeIndicatorVisibility = false
-                        delay(500) //for smooth loading screen
                         heroDataState = DataState.Success(data)
-
-                    } else {
+                    } else if(!repository.isInternetAvailable()){
                         //if db return not empty list, this mean we should try offline mode.
-                        if (data != emptyList<HeroEntity>() && !repository.isInternetAvailable()) {
+                        if (data != emptyList<HeroEntity>()) {
                             swipeIndicatorVisibility = false
-                            delay(500)  //for smooth loading screen
                             heroDataState = DataState.Offline(data)
-
                         } else {
                             throw Exception(ListException.FIRST_ENTER)
                         }

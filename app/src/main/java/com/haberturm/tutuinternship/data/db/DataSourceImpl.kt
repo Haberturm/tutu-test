@@ -35,7 +35,6 @@ class DataSourceImpl(
         )
     }
 
-
     override suspend fun clearAllData() {
         withContext(Dispatchers.IO) {
             heroQueries.clearData()
@@ -44,11 +43,18 @@ class DataSourceImpl(
         }
     }
 
-    override fun insertData(heroes: List<SuperHero>) {
-
+    private fun clear() {
         heroQueries.transaction {
-            heroes.forEach { hero ->
+            heroQueries.clearData()
+            appearanceQueries.clearData()
+            powerstatsQueries.clearData()
+        }
+    }
 
+    override fun insertData(heroes: List<SuperHero>) {
+        heroQueries.transaction {
+            clear()
+            heroes.forEach { hero ->
                 insertHero(
                     id = hero.id,
                     name = hero.name,
@@ -74,11 +80,8 @@ class DataSourceImpl(
                     eyeColor = hero.appearance.eyeColor,
                     hairColor = hero.appearance.hairColor
                 )
-
             }
         }
-
-
     }
 
     override suspend fun getStatsById(id: Int): hero.herodb.Powerstats? {
