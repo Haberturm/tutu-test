@@ -18,37 +18,9 @@ class ListScreenRepositoryImpl(
     private val db: DataSource,
 ) : ListScreenRepository {
 
-    private suspend fun getDataFromApiToBd(){
+    private suspend fun getDataFromApiToBd() {
         db.insertData(RetrofitClient.retrofit.getDataList())
-//            RetrofitClient.retrofit.getDataList().forEach { hero ->
-//                db.insertHero(
-//                    id = hero.id,
-//                    name = hero.name,
-//                    fullName = hero.biography.fullName,
-//                    image = hero.images.sm
-//                )
-//                db.insertStats(
-//                    id = hero.id,
-//                    intelligence = hero.powerstats.intelligence,
-//                    strength = hero.powerstats.strength,
-//                    speed = hero.powerstats.speed,
-//                    durability = hero.powerstats.durability,
-//                    power = hero.powerstats.power,
-//                    combat = hero.powerstats.combat
-//                )
-//                db.insertAppearance(
-//                    id = hero.id,
-//                    gender = hero.appearance.gender,
-//                    race = check4null(hero.appearance.race),
-//                    height = hero.appearance.height[1], //lets trust our api:)
-//                    weight = hero.appearance.weight[1],
-//                    eyeColor = hero.appearance.eyeColor,
-//                    hairColor = hero.appearance.hairColor
-//                )
-//            }
     }
-
-
 
     override fun isInternetAvailable(): Boolean {
         return try {
@@ -63,13 +35,12 @@ class ListScreenRepositoryImpl(
         }
     }
 
-     override suspend fun getSuperHeroList(refresh: Boolean): Flow<List<HeroEntity>> {
-        Log.i("SPDATA1", "in rep")
-         return if(refresh){
-             getDataFromApiToBd()
-             db.getAllHeroes()
-         }else{
-             db.getAllHeroes()
-         }
+    override suspend fun getSuperHeroList(refresh: Boolean): Flow<List<HeroEntity>> {
+        if (refresh) {
+            getDataFromApiToBd()
+            return db.getAllHeroes()
+        } else {
+            return db.getAllHeroes()
+        }
     }
 }
